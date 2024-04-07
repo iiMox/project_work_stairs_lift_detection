@@ -7,6 +7,7 @@ import matplotlib.animation as manimation
 from tqdm import tqdm
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 import argparse
+import gc
 
 """ def animateGraph(filename, xLabel, yLabel):
     # Load CSV File
@@ -62,11 +63,12 @@ import argparse
     progress_bar.close()
     writer.finish()
 """
-
-def animateGraph(filename, xLabel, yLabel):
+def animateGraph(filename, xLabel, yLabel, num):
 
     # Create Folder To Store The Video Segments
-    os.mkdir("video_segments")
+    os.mkdir(f"C:\project_videos\{num}")
+
+    os.mkdir(f"C:\project_videos\{num}\\video_segments")
 
     # Load CSV File
     df = pd.read_csv(filename)
@@ -95,7 +97,7 @@ def animateGraph(filename, xLabel, yLabel):
         progress_bar.update(1)
         writer = FFMpegWriter(fps=frames_list[j], metadata=metadata)
         fig, ax = plt.subplots(figsize=(10, 5))
-        with writer.saving(fig, f"video_segments/{yLabel.lower()}_{xLabel.lower()}_chart_{j}.mp4", 100):
+        with writer.saving(fig, f"C:\project_videos\{num}\\video_segments\{yLabel.lower()}_{xLabel.lower()}_chart_{j}.mp4", 100):
             plt.grid(True, linestyle='--', color='gray', linewidth=0.5)
             line, = ax.plot(x, y, color='black')
             circle, = ax.plot([], [], "ro", markersize=2)
@@ -119,7 +121,7 @@ def animateGraph(filename, xLabel, yLabel):
                 else:
                     limit += 1
                 writer.grab_frame()
-        video_clip = VideoFileClip(f"video_segments/{yLabel.lower()}_{xLabel.lower()}_chart_{j}.mp4")
+        video_clip = VideoFileClip(f"C:\project_videos\{num}\\video_segments\{yLabel.lower()}_{xLabel.lower()}_chart_{j}.mp4")
         video_clips.append(video_clip)
 
     # Close Progress Bar
@@ -127,12 +129,12 @@ def animateGraph(filename, xLabel, yLabel):
         
     final_video = concatenate_videoclips(video_clips) # Concatenate all video clips into one final video
 
-    final_video.write_videofile(f"{yLabel.lower()}_{xLabel.lower()}.mp4", codec="libx264") # Save the final video
+    final_video.write_videofile(f"C:\project_videos\{num}\\final.mp4", codec="libx264") # Save the final video
 
-    shutil.rmtree("video_segments")
+    shutil.rmtree("C:\project_videos\{num}\\video_segments")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
+    """ parser = argparse.ArgumentParser(
                     prog='Graph Animation Video Generator',
                     description='What the program does',
                     epilog='Text at the bottom of help')
@@ -141,7 +143,10 @@ if __name__ == "__main__":
     parser.add_argument('-y', '--yLabel')
 
     args = parser.parse_args()
-    animateGraph(args.filename, args.xLabel, args.yLabel)
+    animateGraph(args.filename, args.xLabel, args.yLabel, i) """
+    for i in range(20):
+        animateGraph(f"Collected Data/data collection phase1/datalogs_participant{i+1}.csv", "Timestamp", "Magnitude", i+1)
+        animateGraph(f"Collected Data/data collection phase1/datalogs_participant{i+1}.csv", "Timestamp", "Pressure", i+1)
 
 
 
