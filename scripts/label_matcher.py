@@ -31,7 +31,7 @@ def label_data(readingsFile, labelsFile):
     for index, row_label in df_labels.iterrows():
         matched_rows_readings = df_readings[df_readings.apply(compare_timestamps, axis=1, args=(row_label,previous_row), )]
 
-        matched_label = row_label["Label"]
+        matched_label = row_label["Comment"]
         matched_start = row_label["Start"]
         matched_end = row_label["End"]
         print(len(matched_rows_readings))
@@ -47,7 +47,7 @@ def label_data(readingsFile, labelsFile):
     df_readings["Label"] = matched_rows_labels
     df_readings["Start"] = matched_rows_start
     df_readings["End"] = matched_rows_end
-    df_readings.to_csv("C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\Collected Labeled Data - Phase 01\\participant 9.csv", index=False)
+    df_readings.to_csv("C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\Collected Labeled Data - Phase 01\\participant 17.csv", index=False)
 
 if __name__ == "__main__":
-    label_data("C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\data collection phase1\\datalogs_participant9.csv", "C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\Annotationdata\\data_participant9.csv")
+    label_data("C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\rawdata\\datalogs_participant17.csv", "C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\Annotationdata\\data_participant17.csv")
