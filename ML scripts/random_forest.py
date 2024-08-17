@@ -103,6 +103,7 @@ if __name__ == "__main__":
                     description='Execute Random Forest Ons Preprocessed Data',
                     epilog='Text at the bottom of help')
     parser.add_argument('filepath') # "C:/...../Collected Data/"
+    parser.add_argument('-tp', '--testParticipant')
 
     args = parser.parse_args()
-    trainModal(args.filepath, 1)
+    trainModal(args.filepath, args.testParticipant)
