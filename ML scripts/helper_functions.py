@@ -4,8 +4,12 @@ from scipy.stats import skew, kurtosis
 from collections import Counter
 import glob
 import shutil
-
-
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import os
+import openpyxl
 
 def read_file(num, dataDir):
     dataset = pd.read_csv(dataDir+'Collected Updated Labeled Data - Phase 01/participant '+ num +'.csv')
@@ -82,11 +86,11 @@ def preprocessing(num, dataset, interval, dataDir):
     result_df.to_csv(dataDir+'preprocessed/preprocessed_data'+str(num)+'.csv', index=False) #save the preprocessed data to a new CSV file
 
 def merge_files(test_participant, dataDir):
-    csv_files = glob.glob(dataDir+'preprocessed/*.csv')
+    csv_files = glob.glob(os.path.join(dataDir, 'preprocessed', '*.csv'))
 
     dfs = []
 
-    filtered_files = [f for f in csv_files if dataDir+'preprocessed/preprocessed_data'+str(test_participant)+'.csv' not in f]
+    filtered_files = [f for f in csv_files if f != os.path.join(dataDir, 'preprocessed', f'preprocessed_data{test_participant}.csv')]
     
     for file in filtered_files: # Loop through each CSV file and append its DataFrame to the list
         df = pd.read_csv(file)
@@ -96,3 +100,60 @@ def merge_files(test_participant, dataDir):
 
     shutil.copy2(dataDir+'preprocessed/preprocessed_data'+str(test_participant)+'.csv', dataDir+'preprocessed/'+str(test_participant)+'/preprocessed_testdata.csv')
     merged_df.to_csv(dataDir+'preprocessed/'+str(test_participant)+'/preprocessed_traindata.csv', index=False)
+
+def validationCurveEstimatorsChart(gridSearch, output):
+    # Extract and plot mean validation scores
+    mean_scores = gridSearch.cv_results_['mean_test_score']
+    params_n_estimators = [param['n_estimators'] for param in gridSearch.cv_results_['params']]
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(params_n_estimators, mean_scores, marker='o')
+    plt.xlabel('n_estimators')
+    plt.ylabel('Mean Validation Accuracy')
+    plt.title('Validation Curve for n_estimators')
+    plt.grid(True)
+    plt.savefig(f"{output}/validation_curve_estimators.png")
+
+def generateConfusionMatrix(yTest, yPred, labelEncoder, output):
+    cm = confusion_matrix(yTest, yPred,  labels=np.arange(len(labelEncoder.classes_)))
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labelEncoder.classes_, yticklabels=labelEncoder.classes_)
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.title('Confusion Matrix')
+    plt.savefig(f"{output}/confusion_matrix.png")
+
+def saveResultsToSheet(params, accuracy, f1Micro, f1Macro, f1Weighted, features, output):
+    # Create a new Excel workbook
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Random Forest Results"
+
+    # Add headers to the sheet
+    sheet['A1'] = "Metric"
+    sheet['B1'] = "Value"
+
+    # Add results to the sheet
+    sheet['A2'] = "Estimators"
+    sheet['B2'] = params["n_estimators"]
+    sheet['A3'] = "Depth"
+    sheet['B3'] = params.get("max_depth", "None")
+    sheet['A4'] = "Accuracy"
+    sheet['B4'] = accuracy
+    sheet['A5'] = "F1 Score (Micro)"
+    sheet['B5'] = f1Micro
+    sheet['A6'] = "F1 Score (Macro)"
+    sheet['B6'] = f1Macro
+    sheet['A7'] = "F1 Score (Weighted)"
+    sheet['B7'] = f1Weighted
+
+    sheet['F1'] = "Feature"
+    sheet['G1'] = "Importance"
+
+    # Write feature and importance values to the sheet
+    for i, (feature, importance) in enumerate(features.itertuples(), start=2):
+        sheet[f'F{i}'] = feature
+        sheet[f'G{i}'] = importance
+
+    # Save the Excel file
+    workbook.save(f"{output}/random_forest_results.xlsx")
