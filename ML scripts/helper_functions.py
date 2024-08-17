@@ -11,7 +11,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import os
 import openpyxl
 
-def read_file(num, dataDir):
+def read_file(num, dataDir, imuOnly):
     dataset = pd.read_csv(dataDir+'Collected Updated Labeled Data - Phase 01/participant '+ num +'.csv')
     if 'Time' in dataset.columns:
         dataset.drop('Time', axis=1, inplace=True)
@@ -19,6 +19,8 @@ def read_file(num, dataDir):
         dataset.drop('Start', axis=1, inplace=True)
     if 'End' in dataset.columns:
         dataset.drop('End', axis=1, inplace=True)
+    if 'Pressure' in dataset.columns and imuOnly: # IMU Case
+        dataset.drop('Pressure', axis=1, inplace=True)
     dataset['Label'] = dataset['Label'].apply(
         lambda x: x.lower() if x != 'Null' else x
     )
@@ -37,7 +39,7 @@ def calculate_slope(data):
         slope = 0
     return slope
 
-def summarize_interval(group, interval):
+def summarize_interval(group, interval, imuOnly):
     start_time = group['Timestamp'].min()
     end_time = group['Timestamp'].max()
     elapsed_time = end_time-start_time
@@ -66,18 +68,22 @@ def summarize_interval(group, interval):
             'max_magnitude': group['Magnitude'].max(),
             'var_magnitude': group['Magnitude'].var(),
             'std_magnitude': np.std(group['Magnitude']),
-            'var_pressure': group['Pressure'].var(),
-            'range_pressure': (group['Pressure'].max() - group['Pressure'].min()),
-            'std_pressure': np.std(group['Pressure']),
-            'slope_pressure': calculate_slope(group['Pressure']),
-            'kurtosis_pressure': kurtosis(group['Pressure']),
-            'skew_pressure': skew(group['Pressure']),
             'Label': label_mode,  # Most frequent label in the interval
         }
+
+        if not imuOnly:
+            summary.update({
+                'var_pressure': group['Pressure'].var(),
+                'range_pressure': (group['Pressure'].max() - group['Pressure'].min()),
+                'std_pressure': np.std(group['Pressure']),
+                'slope_pressure': calculate_slope(group['Pressure']),
+                'kurtosis_pressure': kurtosis(group['Pressure']),
+                'skew_pressure': skew(group['Pressure']),
+            })
         return pd.Series(summary)
     
-def preprocessing(num, dataset, interval, dataDir):
-    result_df = dataset.groupby(dataset['Timestamp'] // interval).apply(lambda x: summarize_interval(x, interval)) # Applying the summarize_interval function to each interval
+def preprocessing(num, dataset, interval, dataDir, imuOnly):
+    result_df = dataset.groupby(dataset['Timestamp'] // interval).apply(lambda x: summarize_interval(x, interval, imuOnly)) # Applying the summarize_interval function to each interval
     
     result_df = result_df.reset_index(drop=True) # Reset index to flatten the DataFrame and remove the multi-index
 
