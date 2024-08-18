@@ -18,4 +18,4 @@ You are welcome to use the dataset for further research projects or training oth
 
 ## License
 
-[MIT](https://creativecommons.org/licenses/by-sa/4.0/deed.en)
+[CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/deed.en)
