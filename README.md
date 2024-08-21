@@ -6,7 +6,6 @@ This project consist of a dataset collected from an activity recognition experim
 
 -   Installation
 -   File Structure
--   Usage
 -   Scripts
 -   Contributing
 -   License
@@ -21,13 +20,13 @@ git clone https://github.com/iiMox/project_work_stairs_lift_detection.git
 
 To use the scripts, run the following commands to install the required packages.
 
--   "ML scripts" folder
+-   `"./ml_scripts"`:
 
     ```bash
     pip install -r "ML scripts/requirements.txt"
     ```
 
--   "script" folder
+-   `"./scripts"`:
 
     ```bash
     pip install -r "scripts/requirements.txt"
@@ -76,9 +75,63 @@ project_work_stairs_lift_detection
 └── README.md
 ```
 
-## Usage
-
 ## Scripts
+
+-   `./ml_scripts`:
+
+        -   `data_preprocessing.py`: calculate the different features using the collected labeled sensor data.
+
+            ```bash
+            python data_preprocessing.py "C:\Desktop\project_work_stairs_lift_detection\collected_data\" -i 4 -imu
+            ```
+
+            -   `-i` : specify the interval value in seconds.
+
+            -   `-imu`: if specified, only imu data will be used. else all data will be used.
+
+    <br /><br /> - `random_forest.py`: calculate the different features using the collected labeled sensor data.
+
+            ```bash
+            python random_forest.py "C:\Desktop\project_work_stairs_lift_detection\collected_data\" -tp 9
+            ```
+
+            -   `-tp` : specify the test participant before running the model.
+
+    <br /><br />
+
+-   `./scripts`:
+
+        -   `animate_graph.py`: generate a video of the reading change for the specified participant.
+
+            ```bash
+            python animate_graph.py "C:\Desktop\project_work_stairs_lift_detection\collected_data\collected_labeled_data_phase_01\" -x Timestamp -y Pressure -np 05
+            ```
+
+            -   `-x`: column to be considered for x axis.
+            -   `-y`: column to be considered for y axis.
+            -   `-np`: participant number for the loading the correct data file.
+
+    <br /><br /> - `label_matcher.py`: implement the correct label to different collected reading rows (null, stairs, lift classes).
+
+            ```bash
+            python label_matcher.py "C:\Desktop\project_work_stairs_lift_detection\collected_data\raw_data\datalogs_participant1.csv" -l "C:\Desktop\project_work_stairs_lift_detection\collected_data\annotation_data-updated\data_participant1.csv" -o "C:\Desktop\project_work_stairs_lift_detection\collected_data\" -np 01
+            ```
+
+            -   `-l`: path to labels file.
+            -   `-o`: output folder path.
+            -   `-np`: participant number for the loading the correct data file.
+        <br /><br />
+        -   `plot.py`: plot accelerometer and pressure values in same graph with timestamps.
+
+            ```bash
+            python plot.py "C:\Desktop\project_work_stairs_lift_detection\collected_data\raw_data\datalogs_participant1.csv\"
+            ```
+            <br />
+        -   `time_calculator.py`: calculate time amount for each class of specific participant file.
+
+            ```bash
+            python time_calculator.py "C:\Desktop\project_work_stairs_lift_detection\collected_data\collected_labeled_data_phase_01\participant 01.csv\"
+            ```
 
 ## Contributing
 
