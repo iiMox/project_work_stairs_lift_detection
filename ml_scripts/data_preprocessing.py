@@ -8,7 +8,7 @@ if __name__ == "__main__":
                     prog='Preprocess Data',
                     description='Data Preprocessing for Random Forest',
                     epilog='Text at the bottom of help')
-    parser.add_argument('filepath') # "C:/...../Collected Data/"
+    parser.add_argument('filepath') # "C:/...../collected_data/"
     parser.add_argument('-i', '--interval', type=float, required=True, help="Specify The Interval For Preprocessed Data")
     parser.add_argument('-imu', '--imuOnly', action='store_true', help="Only Include IMU Data")
 

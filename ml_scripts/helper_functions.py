@@ -12,7 +12,7 @@ import os
 import openpyxl
 
 def read_file(num, dataDir, imuOnly):
-    dataset = pd.read_csv(dataDir+'Collected Updated Labeled Data - Phase 01/participant '+ num +'.csv')
+    dataset = pd.read_csv(dataDir+'collected_updated_labeled_data_phase_01/participant '+ num +'.csv')
     if 'Time' in dataset.columns:
         dataset.drop('Time', axis=1, inplace=True)
     if 'Start' in dataset.columns:

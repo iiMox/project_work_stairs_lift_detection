@@ -35,7 +35,7 @@ To use the scripts, run the following commands to install the required packages.
 
 ## File Structure
 
-```mermaid
+```
 project_work_stairs_lift_detection
 ├── assets
 │

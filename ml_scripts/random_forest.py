@@ -12,7 +12,7 @@ from helper_functions import validationCurveEstimatorsChart, generateConfusionMa
 randSeed = 789456 #do not change this random seed anytime.
 
 def trainModal(filepath, testParticipant):
-    output = f'{filepath}/Collected Data/preprocessed/{testParticipant}'
+    output = f'{filepath}/collected_data/preprocessed/{testParticipant}'
     
     data = pd.read_csv(f'{output}/preprocessed_traindata.csv')
 
@@ -102,7 +102,7 @@ if __name__ == "__main__":
                     prog='Random Forest',
                     description='Execute Random Forest Ons Preprocessed Data',
                     epilog='Text at the bottom of help')
-    parser.add_argument('filepath') # "C:/...../Collected Data/"
+    parser.add_argument('filepath') # "C:/...../collected_data/"
     parser.add_argument('-tp', '--testParticipant', type=int, required=True, help="Specify The Test Participant Number")
 
     args = parser.parse_args()

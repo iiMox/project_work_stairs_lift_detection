@@ -71,5 +71,4 @@ if __name__ == "__main__":
     parser.add_argument('-np', '--numberParticipant')
 
     args = parser.parse_args()
-    """ label_data("C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\rawdata\\datalogs_participant17.csv", "C:\\Users\\NiMou\\Desktop\\project_work_stairs_lift_detection\\Collected Data\\Annotationdata\\data_participant17.csv") """
     label_data(args.filepath, args.labelsFile, args.outputFolder, args.numberParticipant)
